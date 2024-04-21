@@ -1,0 +1,55 @@
+body {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    padding: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    background: bisque;
+    font-size: 40px;
+}
+header
+
+#botones {
+    display: flex;
+    flex-direction: column;
+}
+
+#botones button {
+    margin: 10px;
+}
+
+.game-container {
+    display: flex;
+    flex: 1;
+}
+
+section {
+    flex: 1;
+}
+
+footer {
+    padding: 20px;
+}
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#board-canvas {
+     margin: 30px;
+ }
+
+.options-section {
+    margin: 20px;
+}
+

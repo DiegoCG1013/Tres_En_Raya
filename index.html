@@ -1,10 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Tres en raya</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="index.js"></script>
 </head>
 <body>
-$END$
+    <header>
+        <h1>Tres en raya<sup>2</sup></h1>
+        <div id="botones">
+            <button id="conf-button">Configurar</button>
+            <button id="instructions-button">Instrucciones</button>
+            <button id="reset-button">Reiniciar</button>
+        </div>
+    </header>
+
+    <div class="game-container">
+        <canvas id="board-canvas" width="750px" height="750px"></canvas>
+        <section class="options-section">
+            <div id="options">
+                <label for="board-size">Tamaño del tablero:</label>
+                <input type="number" id="board-size" value="3" min="3" max="10">
+                <button id="save-button">Guardar</button>
+            </div>
+
+        </section>
+    </div>
+
 </body>
 </html>
