@@ -1,3 +1,4 @@
+
 body {
     display: flex;
     flex-direction: row;
@@ -8,17 +9,18 @@ body {
 
 header {
     padding: 100px;
-    height: 100%;
+    height: auto;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
     background: bisque;
-    font-size: 40px;
+    font-size: 4vh;
 }
 
 #botones {
     display: flex;
     flex-direction: column;
+
 }
 
 #botones button {
@@ -59,7 +61,7 @@ button {
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     color: #fff;
-    font-size: 14px;
+    font-size: 2vh;
     padding: 10px 25px;
 }
 
@@ -103,14 +105,24 @@ button:hover {
 
 .modal p {
     opacity: 0.7;
-    font-size: 14px;
+    font-size: calc(1vh + 6px);
 }
 
 li {
     margin: 10px;
+    font-size: calc(1.7vh + 3px);
+}
+
+h2 {
+    font-size: calc(2.7vh + 6px);
 }
 
 .options-section * {
     margin: 10px;
+}
+
+canvas#board-canvas {
+    border: 1px solid #000;
+
 }
 

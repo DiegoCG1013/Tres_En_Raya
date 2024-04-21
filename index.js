@@ -1,15 +1,28 @@
 let bigBoard;
 let currentPlayer = 'X';
 let canvas;
-window.onload = () => {
 
+window.onresize = () => {
+    canvas.width = window.innerHeight * 0.85;
+    canvas.height = window.innerHeight * 0.85;
+    drawBoard(canvas, canvas.getContext('2d'), size);
+}
+
+
+window.onload = () => {
     canvas = document.getElementById('board-canvas');
+    canvas.width = window.innerHeight * 0.85;
+    canvas.height = window.innerHeight * 0.85;
     const ctx = canvas.getContext('2d');
+    console.log(canvas.width, canvas.height);
     size = 3;
 
     const reset = document.getElementById('reset-button');
     reset.onclick = () => {
         bigBoard = createBigBoard(size);
+        canvas = document.getElementById('board-canvas');
+        console.log(canvas.width, canvas.height);
+
         drawBoard(canvas, ctx, size);
     }
 
@@ -31,14 +44,14 @@ window.onload = () => {
     const guardar = document.getElementById('save-button');
     const inputSize = document.getElementById('board-size');
     guardar.onclick = () => {
-            if (inputSize.value !== size) {
-                size = inputSize.value;
-                bigBoard = createBigBoard(size);
-                drawBoard(canvas, ctx, size, bigBoard);
-            }
+        if (inputSize.value !== size) {
+            size = inputSize.value;
+            bigBoard = createBigBoard(size);
+            drawBoard(canvas, ctx, size, bigBoard);
+        }
     }
 
-    canvas.addEventListener('click', function(event) {
+    canvas.addEventListener('click', function (event) {
         const rect = canvas.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
@@ -70,10 +83,10 @@ window.onload = () => {
                 bigBoard.subBoardWinners[subBoardIndexY][subBoardIndexX] = currentPlayerSymbol;
                 drawSymbolWinner(currentPlayerSymbol, ctx, subBoardIndexX, subBoardIndexY);
                 if (isWinner(bigBoard.subBoardWinners, currentPlayerSymbol)) {
-                    setTimeout(function() {
+                    setTimeout(function () {
                         alert(`¡El jugador con ${currentPlayerSymbol} ha ganado!`);
                         bigBoard = createBigBoard(size);
-                    drawBoard(canvas, ctx, size);
+                        drawBoard(canvas, ctx, size);
                     }, 10);
                 }
             } else if (isFull(bigBoard.bigBoard[subBoardIndexY][subBoardIndexX])) {
