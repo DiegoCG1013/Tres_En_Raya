@@ -7,6 +7,22 @@ window.onload = () => {
     const ctx = canvas.getContext('2d');
     size = 3;
 
+    const reset = document.getElementById('reset-button');
+    reset.onclick = () => {
+        bigBoard = createBigBoard(size);
+        drawBoard(canvas, ctx, size);
+    }
+
+    const instructions = document.getElementById('instructions-button');
+    const emergente = document.getElementById('modal_container');
+    const close = document.getElementById('close');
+    instructions.onclick = () => {
+        emergente.classList.add('show');
+    };
+    close.addEventListener('click', () => {
+        emergente.classList.remove('show');
+    });
+
     // Crear la estructura de datos del tablero grande y los tableros pequeños
     bigBoard = createBigBoard(size);
 
@@ -33,7 +49,7 @@ window.onload = () => {
 
         // Verificación de tablero pequeño completado
         if (isSubBoardComplete(subBoardIndexX, subBoardIndexY)) {
-            return; // El tablero pequeño está completo, no se puede seleccionar
+            return;
         }
 
         // Verificar si la casilla está vacía
@@ -51,6 +67,20 @@ window.onload = () => {
                 // Marcar el tablero pequeño como completo
                 bigBoard.subBoardWinners[subBoardIndexY][subBoardIndexX] = currentPlayerSymbol;
                 drawSymbolWinner(currentPlayerSymbol, ctx, subBoardIndexX, subBoardIndexY);
+                if (isWinner(bigBoard.subBoardWinners, currentPlayerSymbol)) {
+                    setTimeout(function() {
+                        alert(`¡El jugador con ${currentPlayerSymbol} ha ganado!`);
+                        bigBoard = createBigBoard(size);
+                    drawBoard(canvas, ctx, size);
+                    }, 10);
+                }
+            } else if (isFull(bigBoard.bigBoard[subBoardIndexY][subBoardIndexX])) {
+                clearSubBoard(subBoardIndexX, subBoardIndexY, ctx, canvas, size);
+                bigBoard.bigBoard[subBoardIndexY][subBoardIndexX].forEach((row, i) => {
+                    row.forEach((cell, j) => {
+                        bigBoard.bigBoard[subBoardIndexY][subBoardIndexX][i][j] = '';
+                    });
+                });
             }
         }
     });
@@ -116,6 +146,7 @@ function drawBoard(canvas, ctx, size) {
 function drawMiniBoard(ctx, x, y, size) {
     // Calcular el tamaño de cada casilla del juego de tres en raya dentro del recuadro
     const cellSize = size / 3;
+
 
     // Dibujar las líneas de las casillas del juego de tres en raya
     ctx.beginPath();
@@ -190,4 +221,33 @@ function isWinner(board, symbol) {
     }
 
     return false;
+}
+
+function clearSubBoard(subBoardIndexX, subBoardIndexY, ctx, canvas, size) {
+    const cellSize = canvas.width / size;
+    const startX = subBoardIndexX * cellSize;
+    const startY = subBoardIndexY * cellSize;
+
+    // Limpiar el contenido de cada casilla del tablero pequeño
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            const x = startX + j * (cellSize / 3);
+            const y = startY + i * (cellSize / 3);
+            ctx.clearRect(x + 3, y+3, cellSize / 3 - 6, cellSize / 3 - 6);
+        }
+    }
+
+    // Volver a dibujar las líneas del tablero
+    drawMiniBoard(ctx, startX, startY, cellSize);
+}
+
+function isFull(board) {
+    for (let row of board) {
+        for (let cell of row) {
+            if (cell === '') {
+                return false;
+            }
+        }
+    }
+    return true;
 }
