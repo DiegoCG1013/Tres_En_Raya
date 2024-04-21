@@ -1,8 +1,8 @@
 let bigBoard;
 let currentPlayer = 'X';
 let canvas;
-
 window.onload = () => {
+
     canvas = document.getElementById('board-canvas');
     const ctx = canvas.getContext('2d');
     size = 3;
@@ -31,9 +31,11 @@ window.onload = () => {
     const guardar = document.getElementById('save-button');
     const inputSize = document.getElementById('board-size');
     guardar.onclick = () => {
-        size = inputSize.value;
-        bigBoard = createBigBoard(size);
-        drawBoard(canvas, ctx, size, bigBoard);
+            if (inputSize.value !== size) {
+                size = inputSize.value;
+                bigBoard = createBigBoard(size);
+                drawBoard(canvas, ctx, size, bigBoard);
+            }
     }
 
     canvas.addEventListener('click', function(event) {
