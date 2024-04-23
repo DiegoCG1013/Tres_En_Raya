@@ -1,30 +1,42 @@
+//Variables globales
 let bigBoard;
 let currentPlayer = 'X';
 let canvas;
+let startTime;
 
+//Funcion para cambiar el tamaño del tablero al cambiar el tamaño de la ventana
 window.onresize = () => {
     canvas.width = window.innerHeight * 0.85;
     canvas.height = window.innerHeight * 0.85;
     drawBoard(canvas, canvas.getContext('2d'), size);
 }
 
-
+//Funcion para que la logica del juego se ejecute cuando la pagina este cargada, evitando errores
 window.onload = () => {
+
+    //Timer
+    startTime = Date.now(); // Almacena el tiempo de inicio
+    timerInterval = setInterval(updateTimer, 1000);
+
+    // Obtener el canvas y el contexto, ademas de darle su tamaño inicial al canvas
     canvas = document.getElementById('board-canvas');
     canvas.width = window.innerHeight * 0.85;
     canvas.height = window.innerHeight * 0.85;
     const ctx = canvas.getContext('2d');
     size = 3;
 
+    //Boton reset
     const reset = document.getElementById('reset-button');
     reset.onclick = () => {
+        startTime = Date.now();
+        updateTimer();
         bigBoard = createBigBoard(size);
         canvas = document.getElementById('board-canvas');
-        console.log(canvas.width, canvas.height);
 
         drawBoard(canvas, ctx, size);
     }
 
+    //Boton instrucciones
     const instructions = document.getElementById('instructions-button');
     const emergente = document.getElementById('modal_container');
     const close = document.getElementById('close');
@@ -35,14 +47,17 @@ window.onload = () => {
         emergente.classList.remove('show');
     });
 
+
     // Crear la estructura de datos del tablero grande y los tableros pequeños
     bigBoard = createBigBoard(size);
-
     drawBoard(canvas, ctx, size);
 
+    //Boton actualizar
     const guardar = document.getElementById('save-button');
     const inputSize = document.getElementById('board-size');
     guardar.onclick = () => {
+        startTime = Date.now();
+        updateTimer();
         if (inputSize.value !== size) {
             size = inputSize.value;
             bigBoard = createBigBoard(size);
@@ -50,6 +65,7 @@ window.onload = () => {
         }
     }
 
+    // Evento de click en el canvas
     canvas.addEventListener('click', function (event) {
         const rect = canvas.getBoundingClientRect();
         const x = event.clientX - rect.left;
@@ -81,6 +97,8 @@ window.onload = () => {
                 // Marcar el tablero pequeño como completo
                 bigBoard.subBoardWinners[subBoardIndexY][subBoardIndexX] = currentPlayerSymbol;
                 drawSymbolWinner(currentPlayerSymbol, ctx, subBoardIndexX, subBoardIndexY);
+
+                // Verificar victoria en el tablero grande
                 if (isWinner(bigBoard.subBoardWinners, currentPlayerSymbol)) {
                     setTimeout(function () {
                         alert(`¡El jugador con ${currentPlayerSymbol} ha ganado!`);
@@ -88,6 +106,8 @@ window.onload = () => {
                         drawBoard(canvas, ctx, size);
                     }, 10);
                 }
+
+            // Verificación de empate en el tablero pequeño
             } else if (isFull(bigBoard.bigBoard[subBoardIndexY][subBoardIndexX])) {
                 clearSubBoard(subBoardIndexX, subBoardIndexY, ctx, canvas, size);
                 bigBoard.bigBoard[subBoardIndexY][subBoardIndexX].forEach((row, i) => {
@@ -100,6 +120,7 @@ window.onload = () => {
     });
 }
 
+//Creacion de los array que representan el tablero grande y los tableros pequeños
 function createBigBoard(size) {
     const bigBoard = [];
     const subBoardWinners = [];
@@ -124,6 +145,7 @@ function createBigBoard(size) {
     return { bigBoard, subBoardWinners };
 }
 
+//Dibujar en el canvas
 function drawBoard(canvas, ctx, size) {
     // Obtener las dimensiones del canvas
     const width = canvas.width;
@@ -146,10 +168,13 @@ function drawBoard(canvas, ctx, size) {
         ctx.moveTo(i * cellSize, 0);
         ctx.lineTo(i * cellSize, height);
     }
+
+    // Estilo de las lineas
     ctx.strokeStyle = '#000';
     ctx.lineWidth = 4;
     ctx.stroke();
 
+    // Dibujar los tableros pequeños
     for (let i = 0; i < size; i++) {
         for (let j = 0; j < size; j++) {
             drawMiniBoard(ctx, i * cellSize, j * cellSize, cellSize);
@@ -157,6 +182,8 @@ function drawBoard(canvas, ctx, size) {
     }
 }
 
+
+// Funcion para dibujar un tablero pequeño
 function drawMiniBoard(ctx, x, y, size) {
     // Calcular el tamaño de cada casilla del juego de tres en raya dentro del recuadro
     const cellSize = size / 3;
@@ -180,10 +207,12 @@ function drawMiniBoard(ctx, x, y, size) {
     ctx.stroke();
 }
 
+//Funcion para verificar si un tablero pequeño esta completo
 function isSubBoardComplete(subBoardIndexX, subBoardIndexY) {
     return bigBoard.subBoardWinners[subBoardIndexY][subBoardIndexX] !== '';
 }
 
+//Funcion para dibujar el simbolo en la posicion correcta del tablero
 function drawSymbol(ctx, subBoardIndexX, subBoardIndexY, cellIndexX, cellIndexY, currentPlayerSymbol, cellSize) {
     // Calcular las coordenadas de la celda dentro del tablero grande
     const x = subBoardIndexX * cellSize * 3 + cellIndexX * cellSize + cellSize / 2;
@@ -196,6 +225,7 @@ function drawSymbol(ctx, subBoardIndexX, subBoardIndexY, cellIndexX, cellIndexY,
     ctx.fillText(currentPlayerSymbol, x, (y + cellSize / 10));
 }
 
+//Funcion para dibujar el simbolo del ganador al completar un tablero pequeño
 function drawSymbolWinner(winner, ctx, subBoardIndexX, subBoardIndexY) {
 // Calcular las coordenadas del centro del tablero pequeño
     const x = subBoardIndexX * (canvas.width / size) + (canvas.width / size) / 2;
@@ -210,7 +240,7 @@ function drawSymbolWinner(winner, ctx, subBoardIndexX, subBoardIndexY) {
     ctx.fillStyle = 'black';
 }
 
-
+//Funcion para verificar si un jugador ha ganado en un tablero
 function isWinner(board, symbol) {
     const size = board.length;
 
@@ -258,7 +288,7 @@ function isWinner(board, symbol) {
     return false;
 }
 
-
+//Funcion para limpiar un tablero pequeño
 function clearSubBoard(subBoardIndexX, subBoardIndexY, ctx, canvas, size) {
     const cellSize = canvas.width / size;
     const startX = subBoardIndexX * cellSize;
@@ -277,6 +307,7 @@ function clearSubBoard(subBoardIndexX, subBoardIndexY, ctx, canvas, size) {
     drawMiniBoard(ctx, startX, startY, cellSize);
 }
 
+//Funcion para verificar si un tablero pequeño esta lleno
 function isFull(board) {
     for (let row of board) {
         for (let cell of row) {
@@ -286,4 +317,12 @@ function isFull(board) {
         }
     }
     return true;
+}
+
+//Funcion para actualizar el timer
+function updateTimer() {
+    const elapsedTime = Math.floor((Date.now() - startTime) / 1000); // Calcula el tiempo transcurrido en segundos
+    const minutes = Math.floor(elapsedTime / 60);
+    const seconds = elapsedTime % 60;
+    document.getElementById('timer').textContent = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 }
