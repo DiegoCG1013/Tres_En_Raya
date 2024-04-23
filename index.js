@@ -280,9 +280,9 @@ function isWinner(board, symbol) {
         if (board[i][size - 1 - i] === symbol) {
             diag2Count++;
         }
-        if (diag1Count === 3 || diag2Count === 3) {
-            return true;
-        }
+    }
+    if (diag1Count === 3 || diag2Count === 3) {
+        return true;
     }
 
     return false;
