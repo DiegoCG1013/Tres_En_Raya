@@ -14,7 +14,6 @@ window.onload = () => {
     canvas.width = window.innerHeight * 0.85;
     canvas.height = window.innerHeight * 0.85;
     const ctx = canvas.getContext('2d');
-    console.log(canvas.width, canvas.height);
     size = 3;
 
     const reset = document.getElementById('reset-button');
@@ -213,30 +212,52 @@ function drawSymbolWinner(winner, ctx, subBoardIndexX, subBoardIndexY) {
 
 
 function isWinner(board, symbol) {
+    const size = board.length;
+
     // Verificar filas
-    for (let i = 0; i < 3; i++) {
-        if (board[i][0] === symbol && board[i][1] === symbol && board[i][2] === symbol) {
-            return true;
+    for (let i = 0; i < size; i++) {
+        let rowCount = 0;
+        for (let j = 0; j < size; j++) {
+            if (board[i][j] === symbol) {
+                rowCount++;
+            }
+            if (rowCount === 3) {
+                return true;
+            }
         }
     }
 
     // Verificar columnas
-    for (let i = 0; i < 3; i++) {
-        if (board[0][i] === symbol && board[1][i] === symbol && board[2][i] === symbol) {
-            return true;
+    for (let i = 0; i < size; i++) {
+        let colCount = 0;
+        for (let j = 0; j < size; j++) {
+            if (board[j][i] === symbol) {
+                colCount++;
+            }
+            if (colCount === 3) {
+                return true;
+            }
         }
     }
 
     // Verificar diagonales
-    if (board[0][0] === symbol && board[1][1] === symbol && board[2][2] === symbol) {
-        return true;
-    }
-    if (board[0][2] === symbol && board[1][1] === symbol && board[2][0] === symbol) {
-        return true;
+    let diag1Count = 0;
+    let diag2Count = 0;
+    for (let i = 0; i < size; i++) {
+        if (board[i][i] === symbol) {
+            diag1Count++;
+        }
+        if (board[i][size - 1 - i] === symbol) {
+            diag2Count++;
+        }
+        if (diag1Count === 3 || diag2Count === 3) {
+            return true;
+        }
     }
 
     return false;
 }
+
 
 function clearSubBoard(subBoardIndexX, subBoardIndexY, ctx, canvas, size) {
     const cellSize = canvas.width / size;
